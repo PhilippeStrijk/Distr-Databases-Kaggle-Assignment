@@ -1,0 +1,8 @@
+\contentsfinish 
+\babel@toc {dutch}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
+\contentsline {section}{\numberline {2}Data Preprocessing}{1}{section.2}%
+\contentsline {section}{\numberline {3}Model Selection}{1}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Logistic Regression}{1}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Random Forest Classifier}{1}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Conclusions}{1}{section.4}%

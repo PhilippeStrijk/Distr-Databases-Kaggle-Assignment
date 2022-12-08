@@ -1,0 +1,61 @@
+
+\documentclass{hogent-article}
+\bibliography{./bibliografie}
+\usepackage{lipsum}
+
+%------------------------------------------------------------------------------
+% Metadata over het voorstel
+%------------------------------------------------------------------------------
+
+%---------- Titel & auteur ----------------------------------------------------
+
+% TODO: geef werktitel van je eigen voorstel op
+\PaperTitle{Coursework Distributed Databases}
+\PaperType % Type document
+
+% TODO: vul je eigen naam in als auteur, geef ook je emailadres mee!
+\Authors{Strijk Philippe, Wout Boeykens, Hannes Roegiers\textsuperscript{1}} % Authors
+\CoPromotor{\textsuperscript{2} (Van Vreckem Bert)}
+\affiliation{\textbf{Contact:}
+  \textsuperscript{1} \href{mailto:wout.boeykens@student.hogent.be}{wout.boeykens@student.hogent.be};
+  \textsuperscript{2}
+  \href{mailto:hannes.roegiers@student.hogent.be}{hannes.roegiers@student.hogent.be};
+  \textsuperscript{3} \href{mailto:philippe.strijk@student.hogent.be}{philippe.strijk@student.hogent.be}
+
+}
+
+%---------- Abstract ----------------------------------------------------------
+
+\Abstract{This task discusses 3 Kaggle competitions}
+
+
+\Keywords{Apache --- Spark --- Maven --- Big Data --- Machine Learning --- Kaggle --- Distributed Databases} % Keywords
+\newcommand{\keywordname}{Sleutelwoorden} % Defines the keywords heading name
+
+%---------- Titel, inhoud -----------------------------------------------------
+
+\begin{document}
+
+\flushbottom % Makes all text pages the same height
+\maketitle % Print the title and abstract box
+\tableofcontents % Print the contents section
+\thispagestyle{empty} % Removes page numbering from the first page
+
+%------------------------------------------------------------------------------
+% Hoofdtekst
+%------------------------------------------------------------------------------
+
+% De hoofdtekst van het voorstel zit in een apart bestand, zodat het makkelijk
+% kan opgenomen worden in de bijlagen van de bachelorproef zelf.
+\input{voorstel-inhoud}
+
+%------------------------------------------------------------------------------
+% Referentielijst
+%------------------------------------------------------------------------------
+
+
+\phantomsection
+
+\printbibliography[heading=bibintoc]
+
+\end{document}
