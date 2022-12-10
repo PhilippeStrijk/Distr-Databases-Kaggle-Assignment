@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (MiKTeX 22.7.30) (preloaded format=xelatex 2022.8.13)  10 DEC 2022 11:40
+This is XeTeX, Version 3.141592653-2.6-0.999994 (MiKTeX 22.7.30) (preloaded format=xelatex 2022.8.13)  10 DEC 2022 11:46
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1167,7 +1167,7 @@ File: img/HOGENT_Logo_Pos_rgb.png Graphic file (type bmp)
 [2] (Distr-Databases-Kaggle-Report.aux)
 Package rerunfilecheck Info: File `Distr-Databases-Kaggle-Report.out' has not c
 hanged.
-(rerunfilecheck)             Checksum: 2BB1A5D078BD2A24D8CC19FA2DDBE579;2721.
+(rerunfilecheck)             Checksum: A8D5A13E9E940F13B7BD72A6847711A9;2537.
 Package logreq Info: Writing requests to 'Distr-Databases-Kaggle-Report.run.xml
 '.
 \openout1 = `Distr-Databases-Kaggle-Report.run.xml'.
@@ -1176,7 +1176,7 @@ Package logreq Info: Writing requests to 'Distr-Databases-Kaggle-Report.run.xml
 Here is how much of TeX's memory you used:
  26225 strings out of 410644
  455048 string characters out of 2816001
- 1684502 words of memory out of 3000000
+ 1683315 words of memory out of 3000000
  46959 multiletter control sequences out of 15000+600000
  527326 words of font info for 116 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
