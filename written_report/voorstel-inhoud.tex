@@ -1,22 +1,149 @@
 %---------- Inleiding ---------------------------------------------------------
 
-\section{Introduction} % The \section*{} command stops section numbering
+\section{Introductie} % The \section*{} command stops section numbering
 \label{sec:introduction}
 
-At the start of this task, our knowledge about Java Spark and the implementation of Machine Learning methods was quite limited, if not inexistant. Translating code from easy-to-use python scikit-learn to Java Apache Spark libraries proved to be a challenge that would send us down many knowledge-filled rabbit holes. The unique character of this assignment was evidently clear from the get-go.
-This coursework discusses 3 Kaggle competitions, namely the Quora Insincere Question Classification, <Wout Subject>, <Hannes Subject>. 
-
+Bij aanvang van deze taak was onze kennis over Java Spark en zijn Machine Learning implementaties beperkt, als niet onbestaande. Code vertalen van makkelijk bruikbare python scikit-learn naar Java Apache Spark libraries, bleek een uitdaging te zijn die ons door meerdere konijnhollen nam. Het unieke karakter van deze taak was evident vanaf het begin.
+Deze taak bespreekt 3 Kaggle competities, namelijk de 'Quora Insincere Question Classification, <Wout Subject>, <Hannes Subject>. 
+De paper zal per hoofdstuk de algemene takeaways toelichten, en vervolgens per competitie specifiek de gedachtengang uitleggen.
 
 %---------- Stand van zaken ---------------------------------------------------
+\section{Initialisatie}
+\label{sec:intialisation}
+Allereerst volgen enkele algemene initalisaties: het random seed getal, de sparksessie, een logger, en de datasets om in te lezen.
+
+Random seed getal:
+
+\begin{lstlisting}[style=codeStyle]
+    private static final int SEED = 42;
+\end{lstlisting}
+
+Spark sessie:
+\begin{lstlisting}[style=codeStyle]
+// Create a Spark Session
+    SparkSession spark = SparkSession.builder()
+    .appName("Spark Demo")
+    .master("local[*]")
+    .config("spark.logLineage", true)
+    .getOrCreate();
+    \end{lstlisting}
+
+Logger:
+\begin{lstlisting}[style=codeStyle]
+// Create a Logger
+    Logger logger = Logger.getLogger("org.apache");
+    logger.setLevel(Level.WARN);
+\end{lstlisting}
+
+
+Datasets inlezen:
+\begin{lstlisting}[style=codeStyle]
+// Read in files: test set, train set
+    Dataset<Row> testSet = spark.read()
+    .option("header", "true")
+    .option("inferSchema", "true")
+    .csv("src/main/resources/test.csv");
+    
+    Dataset<Row> trainSet = spark.read()
+    .option("header", "true")
+    .option("inferSchema", "true")
+    .csv("src/main/resources/train.csv");
+\end{lstlisting}
+
+\section{Een kijkje nemen}
+\label{sec:taking-a-look}
+Voordat de data wordt aangepast en het model geselecteerd wordt, moet de data begrepen en bekeken worden. 
+
+\subsection{Quora Incinsere Question Classification}
+ 
+\subsubsection{Hoe zien de datasets eruit?}
+
+Test set:
+\begin{lstlisting}[style=commentStyle]
++--------------------+--------------------+
+|                 qid|       question_text|
++--------------------+--------------------+
+|0000163e3ea7c7a74cd7|Why do so many wo...|
+|00002bd4fb5d505b9161|When should I app...|
+|00007756b4a147d2b0b3|What is it really...|
++--------------------+--------------------+
+
+\end{lstlisting}
+In het geval van de test set is dit goed; er is een unieke identifier en een string aan teksten, geen labels.
+
+
+Train set:
+\begin{lstlisting}[style=commentStyle]
++--------------------+--------------------+------+
+|                 qid|       question_text|target|
++--------------------+--------------------+------+
+|00002165364db923c7e6|How did Quebec na...|     0|
+|000032939017120e6e44|Do you have an ad...|     0|
+|0000412ca6e4628ce2cf|Why does velocity...|     0|
++--------------------+--------------------+------+
+\end{lstlisting}
+Hetzelfde als de test set, maar wel met labels.
+
+\subsubsection{Hoe groot zijn de sets?}
+Wat is de grootte van de sets?
+\begin{lstlisting}[style=commentStyle]
+Size test set: 375810   Size train set: 1306140
+\end{lstlisting}
+\subsubsection{Hoe zijn de targets verdeeld?}
+Hoeveel vragen hebben we in de training data die gelabeled zijn als 'incinsere', met een 1?
+
+\begin{lstlisting}[style=commentStyle]
+    Size with target = 1: 79807
+\end{lstlisting}
+We kunnen hieruit concluderen dat uit de training set van 1.306.140 entries, er 79.807 gelabeled zijn als 'incinsere'. Dit is 6.11\% van de gevallen.
+
+\subsubsection{Welke woorden komen er het vaakst voor?}
 
 \section{Data Preprocessing}
 \label{sec:preprocessing}
+\subsection{Quora Incinsere Question Classification}
+\subsubsection{Tokenization}
+Allereerst moeten alle woorden getokenized worden.
+\begin{lstlisting}[style=codeStyle]
+   Tokenizer tokenizer = new Tokenizer().setInputCol("question_text").setOutputCol("tokens");
+   trainSet = tokenizer.transform(trainSet);
+\end{lstlisting}
 
+\subsubsection{Cleaning up}
+Specifieke waarden verwijderen uit een dataset in Java Spark kan makkelijk gedaan worden via UDF's. Deze UDF gaan we gebruiken om komma's, vraagtekens en punten te verwijderen. Qua redenering komt deze stap na de tokenization, het is echter makkelijker om de UDF toe te passen op String objecten, vandaar zetten we hem in de code vóór de tokenization.
+\begin{lstlisting}[style=codeStyle]
+    UDF1<String, String> replaceQM = new UDF1<String, String>() {
+       public String call (final String str) throws Exception {
+                return str.replaceAll("[\\?,.]", "");
+            }
+        };
+        // Register the UDF
+        spark.udf().register("replaceQM", replaceQM, DataTypes.StringType);
+        // Apply the UDF
+        trainSet.select(functions.callUDF("replaceQM", trainSet.col("question_text"))
+        .alias("column_name_without_QM"));
+        
+        trainSet = trainSet.withColumn("column_name_without_QM", functions.callUDF("replaceQM", trainSet.col("question_text")));
+        trainSet = trainSet.drop("question_text").withColumnRenamed("column_name_without_QM", "question_text");
+\end{lstlisting}
+Vervolgens worden de stopwoorden die heel vaak voorkomen, maar weinig zeggen over de inhoud, verwijderd.
+Na het bekijken van de dataset, zijn er een aantal woorden die men extra verwijderd wilt zien. 
+Zo heeft de StopWordsRemover daar een setter voor. Om de standaard woordenlijst te behouden, en er nieuwe aan toe te voegen, halen we de standaard woordenlijst op, en voegen samen met degene die we zelf gedeclareerd hebben. De woordenlijst die hier gedeclareerd wordt is op basis van een Kaggle notebook.
+\begin{lstlisting}[style=codeStyle]
+    StopWordsRemover remover = new StopWordsRemover()
+        .setInputCol("tokens")
+        .setOutputCol("tokens w/o stopwords");	
+        String[] originalStopwords = remover.getStopWords();
+        String[] stopwords = new String[] {"one ", "br", "Po", "th", "sayi", "fo", "unknown"};
+        String[] allStopwords = combineObjects(stopwords, originalStopwords);
+        remover.setStopWords(allStopwords);
+        trainSet = remover.transform(trainSet);	
+\end{lstlisting} 
 
 
 \section{Model Selection}
 \subsection{Logistic Regression}
-\subsection{Random Forest Classifier}
+
 
 %---------- Verwachte conclusies ----------------------------------------------
 \section{Conclusions}

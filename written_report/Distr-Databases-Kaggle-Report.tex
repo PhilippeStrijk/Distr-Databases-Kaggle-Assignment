@@ -2,6 +2,57 @@
 \documentclass{hogent-article}
 \bibliography{./bibliografie}
 \usepackage{lipsum}
+\usepackage{courier} %% Sets font for listing as Courier.
+\usepackage{listings, xcolor}
+
+\definecolor{javared}{rgb}{0.6,0,0} % for strings
+\definecolor{javagreen}{rgb}{0.25,0.5,0.35} % comments
+\definecolor{javapurple}{rgb}{0.5,0,0.35} % keywords
+\definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % javadoc
+
+\lstdefinestyle{codeStyle}{language=Java,
+    tabsize = 2, %% set tab space width
+    showstringspaces = false, %% prevent space marking in strings, string is defined as the text that is generally printed directly to the console
+    numbers = none, %% display line numbers on the left
+    commentstyle = \color{green}, %% set comment color
+    keywordstyle = \color{blue}, %% set keyword color
+    stringstyle = \color{red}, %% set string color
+    rulecolor = \color{black}, %% set frame color to avoid being affected by text color
+    basicstyle = \small \ttfamily , %% set listing font and size
+    breaklines = true, %% enable line breaking
+    numberstyle = \tiny,
+    frame = trBL, 
+    firstnumber = last, 
+    escapeinside={(*@}{@*)}}
+
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+
+\lstdefinestyle{commentStyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=none,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+
 
 %------------------------------------------------------------------------------
 % Metadata over het voorstel
@@ -29,7 +80,7 @@
 \Abstract{This task discusses 3 Kaggle competitions}
 
 
-\Keywords{Apache --- Spark --- Maven --- Big Data --- Machine Learning --- Kaggle --- Distributed Databases} % Keywords
+\Keywords{Apache --- Spark --- Maven --- Big Data --- Machine Learning --- Classification --- Regression --- Kaggle --- Distributed Databases} % Keywords
 \newcommand{\keywordname}{Sleutelwoorden} % Defines the keywords heading name
 
 %---------- Titel, inhoud -----------------------------------------------------
