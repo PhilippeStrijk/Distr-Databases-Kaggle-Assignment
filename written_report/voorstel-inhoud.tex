@@ -4,7 +4,7 @@
 \label{sec:introduction}
 
 Bij aanvang van deze taak was onze kennis over Java Spark en zijn Machine Learning implementaties beperkt, als niet onbestaande. Code vertalen van makkelijk bruikbare python scikit-learn naar Java Apache Spark libraries, bleek een uitdaging te zijn die ons door meerdere konijnhollen nam. Het unieke karakter van deze taak was evident vanaf het begin.
-Deze taak bespreekt 3 Kaggle competities, namelijk de 'Quora Insincere Question Classification, <Wout Subject>, <Hannes Subject>. 
+Deze taak bespreekt 3 Kaggle competities, namelijk de 'Quora Insincere Question Classification, House Prices - Advanced Regression Techniques, 'Tabular Playground Series - Nov 2022'. 
 De paper zal per hoofdstuk de algemene takeaways toelichten, en vervolgens per competitie specifiek de gedachtengang uitleggen.
 
 %---------- Stand van zaken ---------------------------------------------------
@@ -213,5 +213,36 @@ Het model bereikte een accuraatheid van .93816\%
 Op het eerste blik, lijkt dit een geweldig resultaat voor het voorspellen van of een vraag oprecht is of niet.
 Maar na een logische kijk op de zaken, blijkt duidelijk dat de accuraatheid van 0.938\% voortkomt uit de 6.11\% van de test set die een 1 hebben gescoord. Met andere woorden, het model voorspelt elke woordcombinatie in de test set als een 0. Het model onderfit de data, een andere aanpak zal nodig zijn. Deze Kaggle competitie is niet opgelost en schijnt een probleem te zijn waarbij gesofisticeerdere methodes dan lineaire regressie gebruikt moeten worden. In deze taak heb ik ook Random Forest gebruikt, maar die kreeg bij het trainen van het model een Java Out of Heap Error, zelfs bij een train set van 2000 entries. 
 
+\subsection{Tabular Playground Series - Nov 2022}
+
+\subsubsection{Spark vs Python}
+Ik heb het gevoel dat python je iets meer helpt en er meer al voor jou gedaan wordt. Maar beide hebben redelijk dezelfde functionaliteiten. Waar ik bij Spark wel veel moeite mee had was de feature engineering. In python ging dit iets vlotter, ook de eerste keren dat ik er mee werktte.
+
+\subsubsection{werken met ML-lib}
+Ik vind met python werken sowieso al makkelijker dan met java te werken. Maar ik had niet het gevoel dat het super moeilijk was om met ML-lib te werken, dit kan natuurlijk ook zijn omdat ik veel dingen herkende vanuit python. De code zelf vond ik ook iets overzichtelijker dan python code.
+
+\subsubsection{results}
+Het luktte me niet om een goed resultaat te bekomen omdat ik telkens een exception kreeg wanneer ik .fit toepaste op mijn Pipeline. Het probleem is dat mijn data nog niet gevectorized is, ik heb dit lang proberen oplossen maar slaagde daar niet in. Als ik nog eens een opdracht heb waar ik met een nieuwe library moet werken, ga ik meer de tijd nemen om eerst alles wat beter te begrijpen voor ik begin aan het programmeer gedeelte zelf. Want tijdens deze opdracht ontdekte ik vaak andere manieren om iets te doen die vaak beter zijn dan de manier waarop ik het deed.
+
+\subsection{House Prices - Advanced Regression Techniques}
+\subsubsection{Spark vs Python}
+Python maakt het veel gemakkelijker als je classificaties wilt omzetten in vectors voor een ML model. Python heeft ingebouwde functies die gemakkelijk omgaan met verschillende datatypes, wat handig is voor grote dataframes.
+
+\subsubsection{problemen}
+Ik heb de grootste problemen ondervonden met het mappen van de kolommen met categorieën. Aangezien sommige kolommen getallen waren en ander categorieën moesten deze opgesplitst worden zodat ze op de juiste manier getransformeerd werden.
+
+Een ander probleem was een OutOfMemoryEror: Java Heap Size. Dit kon ik oplossen door een VM argument mee te geven met eclipse '-Xmx1024m'. Dit zette de heap size op 1GB.
+
+Het laatste probleem dat ik ondervonden heb was een probleem met de versie van MLlib van Spark. Ik heb de pom-file aangepast naar een versie ouder is dan 2.13.
+
+\begin{lstlisting}[style=codeStyle]
+    <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-mllib_2.12</artifactId>
+        <version>3.3.1</version>
+        <scope>provided</scope>
+    </dependency>
+    
+\end{lstlisting}
   
 

@@ -2,8 +2,8 @@
 \contentsline {section}{\numberline {1}Introductie}{1}{section.1}%
 \contentsline {section}{\numberline {2}Initialisatie}{1}{section.2}%
 \contentsline {section}{\numberline {3}Een kijkje nemen}{1}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Quora Incinsere Question Classification}{1}{subsection.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.1}Hoe zien de datasets eruit?}{1}{subsubsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1}Quora Incinsere Question Classification}{2}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Hoe zien de datasets eruit?}{2}{subsubsection.3.1.1}%
 \contentsline {subsubsection}{\numberline {3.1.2}Hoe groot zijn de sets?}{2}{subsubsection.3.1.2}%
 \contentsline {subsubsection}{\numberline {3.1.3}Hoe zijn de targets verdeeld?}{2}{subsubsection.3.1.3}%
 \contentsline {section}{\numberline {4}Data Preprocessing}{2}{section.4}%
@@ -11,9 +11,16 @@
 \contentsline {subsubsection}{\numberline {4.1.1}Tokenization}{2}{subsubsection.4.1.1}%
 \contentsline {subsubsection}{\numberline {4.1.2}Cleaning up}{2}{subsubsection.4.1.2}%
 \contentsline {subsubsection}{\numberline {4.1.3}Hashing and IDF'ing}{2}{subsubsection.4.1.3}%
-\contentsfinish 
 \contentsline {section}{\numberline {5}Model Selection}{3}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Quora Incinsere Question Classification}{3}{subsection.5.1}%
 \contentsline {subsubsection}{\numberline {5.1.1}Logistic Regression}{3}{subsubsection.5.1.1}%
 \contentsline {section}{\numberline {6}Conclusions}{3}{section.6}%
 \contentsline {subsection}{\numberline {6.1}Quora Incinsere Question Classification}{3}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Tabular Playground Series - Nov 2022}{3}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Spark vs Python}{3}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.2}werken met ML-lib}{3}{subsubsection.6.2.2}%
+\contentsline {subsubsection}{\numberline {6.2.3}results}{3}{subsubsection.6.2.3}%
+\contentsline {subsection}{\numberline {6.3}House Prices - Advanced Regression Techniques}{3}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}Spark vs Python}{3}{subsubsection.6.3.1}%
+\contentsline {subsubsection}{\numberline {6.3.2}problemen}{3}{subsubsection.6.3.2}%
+\contentsfinish 
