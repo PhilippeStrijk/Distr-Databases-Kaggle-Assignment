@@ -83,7 +83,7 @@ public class LogisticPaperVersion {
 				   .csv("src/main/resources/train.csv");
 				
 		trainSet = trainSet.na().fill("");
-		
+		testSet = testSet.na().fill("");
 		long sizeTestSet = testSet.count();
 		long sizeTrainSet = trainSet.count();
 		// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -126,17 +126,54 @@ public class LogisticPaperVersion {
 
 		trainSet = trainSet.drop("question_text", "tokens");
 		trainSet = trainSet.withColumnRenamed("tokens w/o stopwords", "tokens");
-		trainSet.show(false);
 		
 		//------------------------				Above here is the TrainSet where the column 'question_text' is changed to 'tokens' and all seperate words are correctly tokenized -----------------------------
 
-		
-		// Create a Dataset<Row> for the output data
-		Dataset<Row> outputData = spark.createDataFrame(new ArrayList<Row>(), trainSet.schema());
-
+		//Hashing
+		HashingTF hashingTF = new HashingTF().setInputCol("tokens").setOutputCol("rawFeatures");
+		trainSet = hashingTF.transform(trainSet);
+		trainSet = trainSet.drop("tokens");
 	
-			
-		spark.close();
+		//IDF
+		IDF idf = new IDF().setInputCol("rawFeatures").setOutputCol("features");
+		IDFModel idfTrainModel = idf.fit(trainSet);
+		trainSet = idfTrainModel.transform(trainSet);
+		
+		//Some cleaning
+		trainSet = trainSet.drop("rawFeatures");
+		trainSet = trainSet.na().fill("");
+		trainSet = trainSet.withColumnRenamed("target", "label");
+		trainSet = trainSet.withColumn("label", trainSet.col("label").cast("double"));
+		trainSet = trainSet.na().fill(0);
+		
+
+		//Continue with smaller trainSet
+		Dataset<Row>[] split = trainSet.randomSplit(new double[]{0.8, 0.2}, SEED); 
+		trainSet = split[1];
+
+		//Before we apply the model to find our predictions, we have to clean our testSet as well.
+		//However, we don't need to remove stopwords or question marks, comma's or dots. 
+		//The model isn't trained to pick up on these things. We only need to hash and vectorize.
+		testSet = tokenizer.transform(testSet);
+		testSet = hashingTF.transform(testSet);
+		testSet = testSet.drop("tokens");
+		IDFModel idfTestModel = idf.fit(testSet);
+		testSet = idfTestModel.transform(testSet);
+		testSet.show();
+		
+		
+		//Logistic Regression
+		LogisticRegression mlr = new LogisticRegression()
+		        .setMaxIter(10)
+		        .setRegParam(0.3)
+		        .setElasticNetParam(0.8);
+		
+		LogisticRegressionModel mlryTrainModel = mlr.fit(trainSet);
+
+		Dataset<Row> predictions = mlryTrainModel.transform(testSet);
+		predictions.show(false);
+		
+		
 		// --------------			AFTER SPARK			--------------------------
 		
 		System.out.println("Size test set: " + sizeTestSet + "   Size train set: " + sizeTrainSet);
@@ -149,6 +186,76 @@ public class LogisticPaperVersion {
 		for(StructField field : schemaFieldsList) {
 		    System.out.println("Column Name: " + field.name() + " DataType: " + field.dataType());
 		}
+		
+		// -------------------------------------------------- 				SUMMARRY 			----------------------------------------------------------------
+		// Print the coefficients and intercepts for logistic regression with multinomial family
+		System.out.println("Multinomial coefficients: " + mlryTrainModel.coefficientMatrix()
+		  + "\nMultinomial intercepts: " + mlryTrainModel.interceptVector());
+		
+		LogisticRegressionTrainingSummary trainingSummary = mlryTrainModel.summary();
+		
+		// Obtain the loss per iteration.
+		double[] objectiveHistory = trainingSummary.objectiveHistory();
+		for (double lossPerIteration : objectiveHistory) {
+		    System.out.println(lossPerIteration);
+		}
+
+		// for multiclass, we can inspect metrics on a per-label basis
+		System.out.println("False positive rate by label:");
+		int i = 0;
+		double[] fprLabel = trainingSummary.falsePositiveRateByLabel();
+		for (double fpr : fprLabel) {
+		    System.out.println("label " + i + ": " + fpr);
+		    i++;
+		}
+
+		System.out.println("True positive rate by label:");
+		i = 0;
+		double[] tprLabel = trainingSummary.truePositiveRateByLabel();
+		for (double tpr : tprLabel) {
+		    System.out.println("label " + i + ": " + tpr);
+		    i++;
+		}
+
+		System.out.println("Precision by label:");
+		i = 0;
+		double[] precLabel = trainingSummary.precisionByLabel();
+		for (double prec : precLabel) {
+		    System.out.println("label " + i + ": " + prec);
+		    i++;
+		}
+
+		System.out.println("Recall by label:");
+		i = 0;
+		double[] recLabel = trainingSummary.recallByLabel();
+		for (double rec : recLabel) {
+		    System.out.println("label " + i + ": " + rec);
+		    i++;
+		}
+
+		System.out.println("F-measure by label:");
+		i = 0;
+		double[] fLabel = trainingSummary.fMeasureByLabel();
+		for (double f : fLabel) {
+		    System.out.println("label " + i + ": " + f);
+		    i++;
+		}
+
+		double accuracy = trainingSummary.accuracy();
+		double falsePositiveRate = trainingSummary.weightedFalsePositiveRate();
+		double truePositiveRate = trainingSummary.weightedTruePositiveRate();
+		double fMeasure = trainingSummary.weightedFMeasure();
+		double precision = trainingSummary.weightedPrecision();
+		double recall = trainingSummary.weightedRecall();
+		System.out.println("Accuracy: " + accuracy);
+		System.out.println("FPR: " + falsePositiveRate);
+		System.out.println("TPR: " + truePositiveRate);
+		System.out.println("F-measure: " + fMeasure);
+		System.out.println("Precision: " + precision);
+		System.out.println("Recall: " + recall);
+
+		
+		spark.close();
 
 	}
 	

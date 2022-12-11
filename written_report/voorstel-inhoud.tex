@@ -97,7 +97,6 @@ Hoeveel vragen hebben we in de training data die gelabeled zijn als 'incinsere',
 \end{lstlisting}
 We kunnen hieruit concluderen dat uit de training set van 1.306.140 entries, er 79.807 gelabeled zijn als 'incinsere'. Dit is 6.11\% van de gevallen.
 
-\subsubsection{Welke woorden komen er het vaakst voor?}
 
 \section{Data Preprocessing}
 \label{sec:preprocessing}
@@ -139,15 +138,80 @@ Zo heeft de StopWordsRemover daar een setter voor. Om de standaard woordenlijst 
         remover.setStopWords(allStopwords);
         trainSet = remover.transform(trainSet);	
 \end{lstlisting} 
+De datasuit die hieruit volgt ziet er zo uit:
+\begin{lstlisting}[style=commentStyle]
++--------------------+------+--------------------+
+|                 qid|target|              tokens|
++--------------------+------+--------------------+
+|00002165364db923c7e6|     0|[quebec, national...|
+|000032939017120e6e44|     0|[adopted, dog, en...|
+|0000412ca6e4628ce2cf|     0|[velocity, affect...|
+|000042bf85aa498cd78e|     0|[otto, von, gueri...|
++--------------------+------+--------------------+
+\end{lstlisting}
+Dit is het soort dataset dat we willen zien. Geen stopwoorden of leestekens.
+
+\subsubsection{Hashing and IDF'ing}
+Vervolgens moeten de woorden gehashed worden:
+\begin{lstlisting}[style=codeStyle]
+    HashingTF hashingTF = new HashingTF().setInputCol("words").setOutputCol("rawFeatures");
+    trainSet = hashingTF.transform(trainSet);
+\end{lstlisting}
+Wat resulteert in de 'rawFeatures' kolom:
+\begin{lstlisting}[style=commentStyle]
++--------------------+------+--------------------+
+|                 qid|target|         rawFeatures|
++--------------------+------+--------------------+
+|00002165364db923c7e6|     0|(262144,[8538,374...|
+|000032939017120e6e44|     0|(262144,[54556,12...|
+|0000412ca6e4628ce2cf|     0|(262144,[27783,29...|
++--------------------+------+--------------------+
+\end{lstlisting}
+Nu worden de woorden gescaled op basis van een IDF model.
+\begin{lstlisting}[style=codeStyle]
+    IDF idf = new IDF().setInputCol("rawFeatures").setOutputCol("features");
+    IDFModel idfTrainModel = idf.fit(trainSet);
+    trainSet = idfTrainModel.transform(trainSet);
+\end{lstlisting}
 
 
 \section{Model Selection}
-\subsection{Logistic Regression}
+
+\subsection{Quora Incinsere Question Classification}
+Voor dit vraagstuk, zal (naïef) een lineair regressiemodel togeepast worden.
+\subsubsection{Logistic Regression}
+Het model wordt als volgt gedefinieert:
+\begin{lstlisting}[style=codeStyle]
+	LogisticRegression mlr = new LogisticRegression()
+        .setMaxIter(10)
+        .setRegParam(0.3)
+        .setElasticNetParam(0.8);
+
+    LogisticRegressionModel mlryTrainModel = mlr.fit(trainSet);
+    Dataset<Row> predictions = mlryTrainModel.transform(testSet);
+\end{lstlisting}
+Helaas crasht het programma hier met een OutOfMemoryError: Java Heap Space
+
+We ommzeilen dit door één vijfde van de dataset te gebruiken.
+\begin{lstlisting}[style=codeStyle]
+    Dataset<Row>[] split = trainSet.randomSplit(new double[]{0.8, 0.2}, SEED); 
+    trainSet = split[1];
+\end{lstlisting}
+
+\begin{lstlisting}[style=codeStyle]
+	LogisticRegressionModel mlryTrainModel = mlr.fit(trainSet);
+    Dataset<Row> predictions = mlryTrainModel.transform(testSet);
+    
+\end{lstlisting}
 
 
 %---------- Verwachte conclusies ----------------------------------------------
 \section{Conclusions}
 \label{sec:conclusions}
+\subsection{Quora Incinsere Question Classification}
+Het model bereikte een accuraatheid van .93816\%
+Op het eerste blik, lijkt dit een geweldig resultaat voor het voorspellen van of een vraag oprecht is of niet.
+Maar na een logische kijk op de zaken, blijkt duidelijk dat de accuraatheid van 0.938\% voortkomt uit de 6.11\% van de test set die een 1 hebben gescoord. Met andere woorden, het model voorspelt elke woordcombinatie in de test set als een 0. Het model onderfit de data, een andere aanpak zal nodig zijn. Deze Kaggle competitie is niet opgelost en schijnt een probleem te zijn waarbij gesofisticeerdere methodes dan lineaire regressie gebruikt moeten worden. In deze taak heb ik ook Random Forest gebruikt, maar die kreeg bij het trainen van het model een Java Out of Heap Error, zelfs bij een train set van 2000 entries. 
 
   
 

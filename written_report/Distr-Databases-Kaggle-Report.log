@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (MiKTeX 22.7.30) (preloaded format=xelatex 2022.8.13)  10 DEC 2022 11:46
+This is XeTeX, Version 3.141592653-2.6-0.999994 (MiKTeX 22.7.30) (preloaded format=xelatex 2022.8.13)  11 DEC 2022 22:58
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1156,7 +1156,10 @@ Package microtype Info: Loading generic protrusion settings for font family
 [1
 
 
-])
+]
+File: img/HOGENT_Logo_Pos_rgb.png Graphic file (type bmp)
+<img/HOGENT_Logo_Pos_rgb.png>
+ [2])
 
 LaTeX Warning: Empty bibliography on input line 110.
 
@@ -1164,22 +1167,24 @@ LaTeX Warning: Empty bibliography on input line 110.
 AED: lastpage setting LastPage
 File: img/HOGENT_Logo_Pos_rgb.png Graphic file (type bmp)
 <img/HOGENT_Logo_Pos_rgb.png>
-[2] (Distr-Databases-Kaggle-Report.aux)
+[3
+
+] (Distr-Databases-Kaggle-Report.aux)
 Package rerunfilecheck Info: File `Distr-Databases-Kaggle-Report.out' has not c
 hanged.
-(rerunfilecheck)             Checksum: A8D5A13E9E940F13B7BD72A6847711A9;2537.
+(rerunfilecheck)             Checksum: 79C4BA68F8ED791883F55326187F8852;2959.
 Package logreq Info: Writing requests to 'Distr-Databases-Kaggle-Report.run.xml
 '.
 \openout1 = `Distr-Databases-Kaggle-Report.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 26225 strings out of 410644
- 455048 string characters out of 2816001
- 1683315 words of memory out of 3000000
- 46959 multiletter control sequences out of 15000+600000
+ 26256 strings out of 410644
+ 455467 string characters out of 2816001
+ 1788760 words of memory out of 3000000
+ 46990 multiletter control sequences out of 15000+600000
  527326 words of font info for 116 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  87i,12n,90p,1028b,4978s stack positions out of 10000i,1000n,20000p,200000b,80000s
 
-Output written on Distr-Databases-Kaggle-Report.pdf (2 pages).
+Output written on Distr-Databases-Kaggle-Report.pdf (3 pages).
